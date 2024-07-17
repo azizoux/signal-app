@@ -12,6 +12,7 @@ import RegisterScreen from "../screens/RegisterScreen";
 import PeopleScreen from "../screens/PeopleScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import { AuthContext } from "../AuthContext";
+import RequestChatRoom from "../screens/RequestChatRoom";
 
 const StackNavigator = () => {
   const { token, setToken } = useContext(AuthContext);
@@ -62,6 +63,11 @@ const StackNavigator = () => {
         <Stack.Screen
           name="Register"
           component={RegisterScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Request"
+          component={RequestChatRoom}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

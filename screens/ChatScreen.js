@@ -12,6 +12,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ChatScreen = () => {
   const [options, setOptions] = useState("Chats");
@@ -26,6 +27,18 @@ const ChatScreen = () => {
       setOptions(...options, option);
     }
   };
+  const logout = () => {
+    clearAuthToken();
+  };
+  const clearAuthToken = async () => {
+    try {
+      await AsyncStorage.removeItem("authToken");
+      setToken("");
+      navigation.replace("Login");
+    } catch (error) {
+      console.log("Error", error);
+    }
+  };
   return (
     <SafeAreaView>
       <View
@@ -37,7 +50,7 @@ const ChatScreen = () => {
           justifyContent: "space-between",
         }}
       >
-        <Pressable>
+        <Pressable onPress={logout}>
           <Image
             style={{ width: 40, height: 40, borderRadius: 20 }}
             source={{
