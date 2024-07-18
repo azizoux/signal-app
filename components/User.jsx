@@ -15,19 +15,19 @@ const User = ({ item }) => {
       >
         <Pressable>
           <Image
-            source={{ uri: item?.image }}
+            source={{ uri: item.image }}
             style={{ width: 50, height: 50, borderRadius: 25 }}
           />
         </Pressable>
         <View style={{ flex: 1 }}>
-          <Text>{item?.name}</Text>
-          <Text>{item?.email}</Text>
+          <Text>{item.name}</Text>
+          <Text>{item.email}</Text>
         </View>
         <Pressable
           onPress={() =>
             navigation.navigate("Request", {
-              name: item?.name,
-              receiverId: item?._id,
+              name: item.name,
+              receiverId: item._id,
             })
           }
           style={{

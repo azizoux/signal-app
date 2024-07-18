@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
+import "core-js/stable/atob";
 import { createContext, useEffect, useState } from "react";
 
 const AuthContext = createContext();

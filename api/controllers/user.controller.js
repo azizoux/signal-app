@@ -21,3 +21,55 @@ export const sendRequest = async (req, res) => {
   await receiver.save();
   res.status(200).json({ message: "request sent succesfully" });
 };
+
+export const getRequests = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const user = await User.findById(userId).populate(
+      "requests.from",
+      "name email"
+    );
+    if (user) {
+      res.json(user.requests);
+    } else {
+      res.status(400);
+      throw new Error("User not found");
+    }
+  } catch (error) {
+    console.log("error", error);
+  }
+};
+
+export const acceptRequest = async (req, res) => {
+  try {
+    const { userId, requestId } = req.body;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        $pull: { requests: { from: requestId } },
+      },
+      { new: true }
+    );
+    if (!updatedUser) {
+      return res.status(404).json({ message: "Request not found" });
+    }
+    await User.findByIdAndUpdate(userId, {
+      $push: { friends: userId },
+    });
+    const friendUser = await User.findByIdAndUpdate(requestId, {
+      $push: { friends: userId },
+    });
+    if (!friendUser) {
+      return res.status(404).json({ message: "Friend not found" });
+    }
+    res.status(200).json({ message: "Request accepted succesfully" });
+  } catch (error) {
+    console.log("Server error", error);
+    res.status(500).json({ message: "Server Error", error });
+  }
+};

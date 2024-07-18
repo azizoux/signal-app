@@ -65,11 +65,6 @@ const StackNavigator = () => {
           component={RegisterScreen}
           options={{ headerShown: false }}
         />
-        <Stack.Screen
-          name="Request"
-          component={RequestChatRoom}
-          options={{ headerShown: false }}
-        />
       </Stack.Navigator>
     );
   };
@@ -86,6 +81,7 @@ const StackNavigator = () => {
           component={PeopleScreen}
           options={{ headerShown: false }}
         />
+        <Stack.Screen name="Request" component={RequestChatRoom} />
       </Stack.Navigator>
     );
   }
