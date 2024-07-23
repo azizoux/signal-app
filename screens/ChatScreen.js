@@ -17,9 +17,10 @@ import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
+import Chat from "../components/Chat";
 
 const ChatScreen = () => {
-  const [options, setOptions] = useState("Chats");
+  const [options, setOptions] = useState([]);
   const [chats, setChats] = useState([]);
   const [requests, setRequests] = useState([]);
   const { token, setToken, setUserId, userId } = useContext(AuthContext);
@@ -28,8 +29,9 @@ const ChatScreen = () => {
     if (options.includes(option)) {
       setOptions(options.filter((c) => c !== option));
     } else {
-      setOptions(...options, option);
+      setOptions([...options, option]);
     }
+    console.log("options:", options);
   };
   const logout = () => {
     clearAuthToken();
@@ -67,7 +69,41 @@ const ChatScreen = () => {
       console.log("Error", error);
     }
   };
-  console.log(requests);
+  const acceptRequest = async (requestId) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/api/users/accept-request",
+        {
+          userId: userId,
+          requestId: requestId,
+        }
+      );
+      if (response.status === 200) {
+        await getRequests();
+      }
+    } catch (error) {
+      console.log("Error", error);
+    }
+  };
+
+  useEffect(() => {
+    if (userId) {
+      getUser();
+    }
+  }, [userId]);
+  const getUser = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8000/api/users/get-user/${userId}`
+      );
+      if (response.status === 200) {
+        setChats(response.data);
+      }
+    } catch (error) {
+      console.log("Error fetching user", error);
+    }
+  };
+  // console.log(chats);
   return (
     <SafeAreaView>
       <View
@@ -118,7 +154,11 @@ const ChatScreen = () => {
         <View>
           {options.includes("Chats") &&
             (chats.length > 0 ? (
-              <View></View>
+              <View>
+                {chats.map((item, index) => (
+                  <Chat item={item} key={index} />
+                ))}
+              </View>
             ) : (
               <View
                 style={{
@@ -154,9 +194,54 @@ const ChatScreen = () => {
         <View style={{ marginVertical: 12 }}>
           {options.includes("Requests") && (
             <View>
-              <Text>Checkout all the requests</Text>
+              <Text style={{ fontSize: 15, fontWeight: "500" }}>
+                Checkout all the requests
+              </Text>
               {requests.map((item, index) => (
-                <Pressable></Pressable>
+                <Pressable key={index} style={{ marginVertical: 12 }}>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 10,
+                    }}
+                  >
+                    <Pressable>
+                      <Image
+                        source={{ uri: item.from.image }}
+                        style={{ width: 50, height: 50, borderRadius: 25 }}
+                      />
+                    </Pressable>
+                    <View style={{ flex: 1 }}>
+                      <Text style={{ fontSize: 15, fontWeight: "500" }}>
+                        {item.from.name}
+                      </Text>
+                      <Text style={{ marginTop: 4, color: "gray" }}>
+                        {item.message}
+                      </Text>
+                    </View>
+                    <Pressable
+                      onPress={() => acceptRequest(item.from._id)}
+                      style={{
+                        padding: 8,
+                        backgroundColor: "#005187",
+                        width: 75,
+                        borderRadius: 5,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 13,
+                          textAlign: "center",
+                          color: "white",
+                        }}
+                      >
+                        Accept
+                      </Text>
+                    </Pressable>
+                    <AntDesign name="delete" size={26} color="red" />
+                  </View>
+                </Pressable>
               ))}
             </View>
           )}

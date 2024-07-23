@@ -13,6 +13,7 @@ import PeopleScreen from "../screens/PeopleScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import { AuthContext } from "../AuthContext";
 import RequestChatRoom from "../screens/RequestChatRoom";
+import ChatRoom from "../screens/ChatRoom";
 
 const StackNavigator = () => {
   const { token, setToken } = useContext(AuthContext);
@@ -82,6 +83,7 @@ const StackNavigator = () => {
           options={{ headerShown: false }}
         />
         <Stack.Screen name="Request" component={RequestChatRoom} />
+        <Stack.Screen name="ChatRoom" component={ChatRoom} />
       </Stack.Navigator>
     );
   }

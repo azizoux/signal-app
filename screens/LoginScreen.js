@@ -17,7 +17,7 @@ import { AuthContext } from "../AuthContext";
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { token, setToken } = useContext(AuthContext);
+  const { token, setToken, setAuthUser } = useContext(AuthContext);
   const navigation = useNavigation();
   useEffect(() => {
     if (token) {
@@ -35,6 +35,7 @@ const LoginScreen = () => {
         const token = response.data.token;
         AsyncStorage.setItem("authToken", token);
         setToken(token);
+        setAuthUser(token);
       });
   };
   return (

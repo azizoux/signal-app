@@ -28,7 +28,7 @@ export const login = async (req, res) => {
       return res.status(402).json({ message: "Invalid password" });
     }
     const secretKey = crypto.randomBytes(32).toString("hex");
-    console.log(secretKey);
+
     const token = jwt.sign({ userId: user._id }, secretKey);
     res.status(200).json({ token });
   } catch (error) {

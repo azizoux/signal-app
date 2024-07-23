@@ -1,7 +1,6 @@
 import User from "../models/user.model.js";
 
 export const getUsers = async (req, res) => {
-  console.log(req.params);
   try {
     const userId = req.params.userId;
     const users = await User.find({ _id: { $ne: userId } });
@@ -27,7 +26,7 @@ export const getRequests = async (req, res) => {
     const userId = req.params.userId;
     const user = await User.findById(userId).populate(
       "requests.from",
-      "name email"
+      "name email image"
     );
     if (user) {
       res.json(user.requests);
@@ -59,7 +58,7 @@ export const acceptRequest = async (req, res) => {
       return res.status(404).json({ message: "Request not found" });
     }
     await User.findByIdAndUpdate(userId, {
-      $push: { friends: userId },
+      $push: { friends: requestId },
     });
     const friendUser = await User.findByIdAndUpdate(requestId, {
       $push: { friends: userId },
@@ -71,5 +70,18 @@ export const acceptRequest = async (req, res) => {
   } catch (error) {
     console.log("Server error", error);
     res.status(500).json({ message: "Server Error", error });
+  }
+};
+
+export const getUser = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const user = await User.findById(userId).populate(
+      "friends",
+      "name email image"
+    );
+    res.status(200).json(user.friends);
+  } catch (error) {
+    console.log("Error fetching user", error);
   }
 };
