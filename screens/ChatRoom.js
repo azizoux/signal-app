@@ -47,8 +47,9 @@ const ChatRoom = () => {
         receiverId,
         message,
       });
-      socket.emit("sendMessage", { senderId, receiverId, message });
       setMessage("");
+      setTimeout(() => fetchMessages(), 1);
+      socket.emit("sendMessage", { senderId, receiverId, message });
     } catch (error) {
       console.log(error);
     }
@@ -92,6 +93,7 @@ const ChatRoom = () => {
     const options = { hour: "numeric", minute: "numeric" };
     return new Date(time).toLocaleString("fr-FR", options);
   };
+  console.log("current user:", userId);
   return (
     <KeyboardAvoidingView style={{ flex: 1, backgroundColor: "white" }}>
       <ScrollView>
